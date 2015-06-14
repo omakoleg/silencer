@@ -1,0 +1,30 @@
+{
+  "name": "silencer",
+  "version": "0.0.1",
+  "description": "Mock and capture method calls",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "export NODE_ENV=test; node ./node_modules/mocha/bin/mocha --harmony --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omakoleg/silencer.git"
+  },
+  "keywords": [
+    "mock",
+    "console",
+    "disable"
+  ],
+  "author": "Oleg Makiienko",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/omakoleg/silencer/issues"
+  },
+  "homepage": "https://github.com/omakoleg/silencer",
+  "devDependencies": {
+    "mocha": "^2.2.5"
+  }
+}

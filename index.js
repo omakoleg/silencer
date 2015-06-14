@@ -1,56 +1,61 @@
 'use strict';
 
-let _ = require('lodash'),
-    object = {
+let self = {
         traces: {},
         originalMethods: {},
-        logger: console
+        subject: console
     };
 
-function disableAll() {
-    _.forOwn(object.logger, function(value, key){
-        if(typeof object.logger[key] === 'function') {
-            object.disableMethod(key);
+self.forOwnFunctions = function(obj, cb){
+    for(var x in obj) {
+        if(obj.hasOwnProperty(x) && typeof obj[x] === 'function') {
+            cb(x, obj[x]);
         }
+    }
+}
+
+self.disableAll = function() {
+    self.forOwnFunctions(self.subject, function(key, value){
+        self.disableMethod(key);
     });
 }
 
-function disableMethod(method){
-    if(object.originalMethods[method] !== undefined){
+self.disableMethod = function(method){
+    if(self.originalMethods[method] !== undefined){
         throw new Error('Trying to redifine already redefined method');
     }
-    if(!object.logger.hasOwnProperty(method)) {
-        throw new Error('Trying to redefine undefined method in logger');
+    if(!self.subject.hasOwnProperty(method)) {
+        throw new Error('Trying to redefine undefined method in subject');
     }
     // save original 
-    object.originalMethods[method] = object.logger[method];
+    self.originalMethods[method] = self.subject[method];
     // reset previous results
-    object.traces[method] = [];
+    self.traces[method] = [];
     // new handler
-    object.logger[method] = function(){
-        object.traces[method].push(Array.prototype.slice.call(arguments));
+    self.subject[method] = function(){
+        self.traces[method].push(Array.prototype.slice.call(arguments));
     }
 }
 /*
     Public API
  */
-object.reset = function(){
-    object.restore();
-    object.setLoger(console);
-    object.traces = [];
+self.reset = function(){
+    self.restore();
+    self.setSubject(console);
+    self.traces = {};
 }
 
-object.restore = function(){
-    _.forOwn(object.originalMethods, function(value, key){
-        object.logger[key] = value;
+self.restore = function(){
+    self.forOwnFunctions(self.originalMethods, function(key, value){
+        self.subject[key] = value;
     });
-    object.originalMethods = {}; // reset 
+    self.originalMethods = {}; // reset 
 }
 
-object.disable = function(){
+self.disable = function(){
     var args = Array.prototype.slice.call(arguments);
     if(args.length === 1) {
-        if(typeof args[0] === 'array') {
+        if(typeof args[0] === 'object') {
             args = args[0];
         } else {
             args = [args.toString()];
@@ -58,21 +63,25 @@ object.disable = function(){
     }
     if(!args || args.length === 0){
         // iterate all methods
-        object.disableAll();
+        self.disableAll();
     } else {
         // disable by arguments list
         args.forEach(function(item){
-            object.disableMethod(item);
+            self.disableMethod(item);
         });
     }
 }
 
-object.setLoger = function(loggerLocal) {
-    object.logger = loggerLocal;
+self.setSubject = function(subjectLocal) {
+    self.subject = subjectLocal;
 }
 
-object.getOutput = function(method) {
-    return object.logger[method];
+self.getOutput = function(method) {
+    return self.traces[method];
 }
 
-module.exports = object;
+self.getOutputs = function() {
+    return self.traces;
+}
+
+module.exports = self;

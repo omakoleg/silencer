@@ -35,6 +35,15 @@ describe('Npm package Silencer', function(){
     });
 
     describe('.restore', function(){
+        it('alias .off', function(){
+            let mock = {
+                something: function(param){ return param; }
+            };
+            subject.on(mock);
+            subject.off();
+            assert.deepEqual(subject.originalMethods, {});
+        });
+
         it('restore all disabled methods', function(){
             let mock = {
                 something: function(param){ return param; },
@@ -115,6 +124,15 @@ describe('Npm package Silencer', function(){
             var mock = { info123qwer: function(){ }};
             subject.setSubject(mock);
             assert.deepEqual(subject.subject, mock);  // subject - private
+        });
+    });
+
+    describe('.on', function (){
+        it('set logger and disable all', function(){
+            var mock = { info123qwer: function(v){ return v; }};
+            subject.on(mock);
+            assert.deepEqual(subject.subject, mock);  // subject - private
+            assert.equal(mock.info123qwer(10), undefined);
         });
     });
 

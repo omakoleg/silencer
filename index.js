@@ -43,14 +43,18 @@ self.reset = function(){
     self.restore();
     self.setSubject(console);
     self.traces = {};
-}
+};
+
+self.off = function(){
+    self.restore();
+};
 
 self.restore = function(){
     self.forOwnFunctions(self.originalMethods, function(key, value){
         self.subject[key] = value;
     });
     self.originalMethods = {}; // reset 
-}
+};
 
 self.disable = function(){
     var args = Array.prototype.slice.call(arguments);
@@ -70,18 +74,23 @@ self.disable = function(){
             self.disableMethod(item);
         });
     }
-}
+};
 
 self.setSubject = function(subjectLocal) {
     self.subject = subjectLocal;
-}
+};
 
 self.getOutput = function(method) {
     return self.traces[method];
-}
+};
 
 self.getOutputs = function() {
     return self.traces;
-}
+};
+
+self.on = function(subjectLocal){
+    self.setSubject(subjectLocal);
+    self.disable();
+};
 
 module.exports = self;

@@ -1,6 +1,6 @@
 {
   "name": "silencer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Mock and capture method calls",
   "main": "index.js",
   "directories": {
